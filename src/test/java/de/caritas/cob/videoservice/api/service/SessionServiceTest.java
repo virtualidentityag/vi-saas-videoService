@@ -53,8 +53,6 @@ public class SessionServiceTest {
 
   @Mock private UserServiceApiControllerFactory userControllerApiControllerFactory;
 
-  @Mock private UserServiceApiControllerFactory userControllerApiControllerFactory;
-
   @Test
   public void
       findSessionOfCurrentConsultant_Should_ReturnConsultantSessionDto_When_GetSessionIsSuccessful() {
