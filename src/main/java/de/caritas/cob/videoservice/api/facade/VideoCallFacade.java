@@ -20,6 +20,7 @@ import de.caritas.cob.videoservice.api.service.statistics.event.StartVideoCallSt
 import de.caritas.cob.videoservice.api.service.statistics.event.StopVideoCallStatisticsEvent;
 import de.caritas.cob.videoservice.api.service.video.VideoCallUrlGeneratorService;
 import de.caritas.cob.videoservice.api.service.video.VideoRoomService;
+import de.caritas.cob.videoservice.api.tenant.TenantContext;
 import de.caritas.cob.videoservice.liveservice.generated.web.model.EventType;
 import de.caritas.cob.videoservice.liveservice.generated.web.model.LiveEventMessage;
 import de.caritas.cob.videoservice.liveservice.generated.web.model.VideoCallRequestDTO;
@@ -90,7 +91,12 @@ public class VideoCallFacade {
         new VideoCallResponseDTO().moderatorVideoCallUrl(videoCallUrls.getModeratorVideoUrl());
     statisticsService.fireEvent(
         new StartVideoCallStatisticsEvent(
-            authenticatedUser.getUserId(), UserRole.CONSULTANT, sessionId, videoCallUuid));
+            authenticatedUser.getUserId(),
+            UserRole.CONSULTANT,
+            sessionId,
+            videoCallUuid,
+            consultantSessionDto.getAskerId(),
+            TenantContext.getCurrentTenant()));
 
     log.info("Started one to one video call for sessionId {}", sessionId);
     return createVideoCallResponseDto;
