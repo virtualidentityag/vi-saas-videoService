@@ -7,10 +7,12 @@ import de.caritas.cob.videoservice.statisticsservice.generated.web.model.EventTy
 import de.caritas.cob.videoservice.statisticsservice.generated.web.model.StartVideoCallStatisticsEventMessage;
 import de.caritas.cob.videoservice.statisticsservice.generated.web.model.UserRole;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class StartVideoCallStatisticsEvent implements StatisticsEvent {
 
   private static final EventType EVENT_TYPE = EventType.START_VIDEO_CALL;
@@ -19,19 +21,18 @@ public class StartVideoCallStatisticsEvent implements StatisticsEvent {
   private @NonNull UserRole userRole;
   private @NonNull Long sessionId;
   private @NonNull String videoCallUuid;
+  private @NonNull String adviceSeekerId;
 
-  /**
-   * {@inheritDoc}
-   */
+  private Long tenantId;
+
+  /** {@inheritDoc} */
   @Override
   public Optional<String> getPayload() {
     return JsonHelper.serializeWithOffsetDateTimeAsString(
         createStartVideoCallStatisticsEventMessage(), LogService::logStatisticsEventError);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public EventType getEventType() {
     return EVENT_TYPE;
@@ -44,7 +45,8 @@ public class StartVideoCallStatisticsEvent implements StatisticsEvent {
         .userRole(userRole)
         .sessionId(sessionId)
         .videoCallUuid(videoCallUuid)
+        .adviceSeekerId(adviceSeekerId)
+        .tenantId(tenantId)
         .timestamp(CustomOffsetDateTime.nowInUtc());
   }
-
 }

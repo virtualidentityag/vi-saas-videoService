@@ -13,10 +13,8 @@ import static de.caritas.cob.videoservice.api.testhelper.TestConstants.CSRF_VALU
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.RC_CHAT_ROOM_ID;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.RC_USER_ID_HEADER;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.RC_USER_ID_VALUE;
-import static de.caritas.cob.videoservice.api.testhelper.TestConstants.SESSION_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -26,11 +24,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.caritas.cob.videoservice.api.facade.StartVideoCallFacade;
+import de.caritas.cob.videoservice.api.facade.VideoCallFacade;
 import de.caritas.cob.videoservice.api.model.RejectVideoCallDTO;
 import de.caritas.cob.videoservice.api.service.RejectVideoCallService;
 import de.caritas.cob.videoservice.api.service.video.jwt.TokenGeneratorService;
 import javax.servlet.http.Cookie;
+import org.jeasy.random.EasyRandom;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,35 +49,33 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class VideoControllerAuthorizationIT {
 
-  @Autowired
-  private MockMvc mvc;
+  private static final EasyRandom easyRandom = new EasyRandom();
 
-  @MockBean
-  private StartVideoCallFacade startVideoCallFacade;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private RejectVideoCallService rejectVideoCallService;
+  @MockBean private VideoCallFacade videoCallFacade;
 
-  @MockBean
-  private TokenGeneratorService tokenGeneratorService;
+  @MockBean private RejectVideoCallService rejectVideoCallService;
+
+  @MockBean private TokenGeneratorService tokenGeneratorService;
 
   private final Cookie csrfCookie = new Cookie(CSRF_COOKIE, CSRF_VALUE);
-
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
   public void createVideoCall_Should_ReturnCreated_When_EverythingSucceeded() throws Exception {
 
-    when(startVideoCallFacade.startVideoCall(any(), anyString())).thenReturn(
-        CREATE_VIDEO_CALL_RESPONSE_DTO);
+    when(videoCallFacade.startVideoCall(any(), anyString()))
+        .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
 
-    mvc.perform(post(PATH_START_VIDEO_CALL)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .header(RC_USER_ID_HEADER, RC_USER_ID_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(VALID_START_VIDEO_CALL_BODY)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_START_VIDEO_CALL)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .header(RC_USER_ID_HEADER, RC_USER_ID_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(VALID_START_VIDEO_CALL_BODY)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated());
   }
 
@@ -86,32 +83,35 @@ public class VideoControllerAuthorizationIT {
   public void createVideoCall_Should_ReturnUnauthorized_When_AuthorizationIsMissing()
       throws Exception {
 
-    when(startVideoCallFacade.startVideoCall(any(), anyString())).thenReturn(
-        CREATE_VIDEO_CALL_RESPONSE_DTO);
+    when(videoCallFacade.startVideoCall(any(), anyString()))
+        .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
 
-    mvc.perform(post(PATH_START_VIDEO_CALL)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(VALID_START_VIDEO_CALL_BODY)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_START_VIDEO_CALL)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(VALID_START_VIDEO_CALL_BODY)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isUnauthorized());
   }
 
   @Test
   @WithMockUser()
-  public void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
-      throws Exception {
+  public void
+      createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
+          throws Exception {
 
-    mvc.perform(post(PATH_START_VIDEO_CALL)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(VALID_START_VIDEO_CALL_BODY)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_START_VIDEO_CALL)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(VALID_START_VIDEO_CALL_BODY)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
-    verifyNoMoreInteractions(startVideoCallFacade);
+    verifyNoMoreInteractions(videoCallFacade);
   }
 
   @Test
@@ -119,28 +119,77 @@ public class VideoControllerAuthorizationIT {
   public void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
       throws Exception {
 
-    mvc.perform(post(PATH_START_VIDEO_CALL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(VALID_START_VIDEO_CALL_BODY)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_START_VIDEO_CALL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(VALID_START_VIDEO_CALL_BODY)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
-    verifyNoMoreInteractions(startVideoCallFacade);
+    verifyNoMoreInteractions(videoCallFacade);
+  }
+
+  @Test
+  public void stopVideoCallShouldReturnUnauthorizedWhenAuthorizationIsMissing() throws Exception {
+    var path = "/videocalls/stop/" + easyRandom.nextInt(100);
+
+    mvc.perform(
+            post(path)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockUser()
+  public void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoConsultantDefaultAuthority()
+      throws Exception {
+    var path = "/videocalls/stop/" + easyRandom.nextInt(100);
+
+    mvc.perform(
+            post(path)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(videoCallFacade);
+  }
+
+  @Test
+  @WithMockUser(authorities = AUTHORITY_CONSULTANT)
+  public void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoCsrfTokens()
+      throws Exception {
+    var path = "/videocalls/stop/" + easyRandom.nextInt(100);
+
+    mvc.perform(
+            post(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(VALID_START_VIDEO_CALL_BODY)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+
+    verifyNoMoreInteractions(videoCallFacade);
   }
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
   public void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
       throws Exception {
-    String content = new ObjectMapper().writeValueAsString(new RejectVideoCallDTO()
-        .rcGroupId("rcGroupId")
-        .initiatorUsername("username")
-        .initiatorRcUserId("rcUserId"));
+    String content =
+        new ObjectMapper()
+            .writeValueAsString(
+                new RejectVideoCallDTO()
+                    .rcGroupId("rcGroupId")
+                    .initiatorUsername("username")
+                    .initiatorRcUserId("rcUserId"));
 
-    mvc.perform(post(PATH_REJECT_VIDEO_CALL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_REJECT_VIDEO_CALL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
     verifyNoMoreInteractions(rejectVideoCallService);
@@ -150,17 +199,21 @@ public class VideoControllerAuthorizationIT {
   @WithMockUser(authorities = {"NO_AUTHORITY"})
   public void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoAuthority()
       throws Exception {
-    String content = new ObjectMapper().writeValueAsString(new RejectVideoCallDTO()
-        .rcGroupId("rcGroupId")
-        .initiatorUsername("username")
-        .initiatorRcUserId("rcUserId"));
+    String content =
+        new ObjectMapper()
+            .writeValueAsString(
+                new RejectVideoCallDTO()
+                    .rcGroupId("rcGroupId")
+                    .initiatorUsername("username")
+                    .initiatorRcUserId("rcUserId"));
 
-    mvc.perform(post(PATH_REJECT_VIDEO_CALL)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_REJECT_VIDEO_CALL)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
 
     verifyNoMoreInteractions(rejectVideoCallService);
@@ -168,19 +221,22 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
-  public void rejectVideoCall_Should_ReturnOkAndCallService_WhenUserRole()
-      throws Exception {
-    String content = new ObjectMapper().writeValueAsString(new RejectVideoCallDTO()
-        .rcGroupId("rcGroupId")
-        .initiatorUsername("username")
-        .initiatorRcUserId("rcUserId"));
+  public void rejectVideoCall_Should_ReturnOkAndCallService_WhenUserRole() throws Exception {
+    String content =
+        new ObjectMapper()
+            .writeValueAsString(
+                new RejectVideoCallDTO()
+                    .rcGroupId("rcGroupId")
+                    .initiatorUsername("username")
+                    .initiatorRcUserId("rcUserId"));
 
-    mvc.perform(post(PATH_REJECT_VIDEO_CALL)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            post(PATH_REJECT_VIDEO_CALL)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
 
     verify(rejectVideoCallService, times(1)).rejectVideoCall(any());
@@ -189,11 +245,12 @@ public class VideoControllerAuthorizationIT {
   @Test
   @WithAnonymousUser
   public void getWebToken_should_generate_token_for_anonymous_user() throws Exception {
-    mvc.perform(get(PATH_GET_WEB_TOKEN)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            get(PATH_GET_WEB_TOKEN)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
 
     verify(tokenGeneratorService).generateToken(RC_CHAT_ROOM_ID);
@@ -202,21 +259,23 @@ public class VideoControllerAuthorizationIT {
   @Test
   @WithAnonymousUser
   public void getWebToken_should_return_forbidden_for_request_without_csrf() throws Exception {
-    mvc.perform(get(PATH_GET_WEB_TOKEN)
-            .header(RC_USER_ID_HEADER, RC_USER_ID_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            get(PATH_GET_WEB_TOKEN)
+                .header(RC_USER_ID_HEADER, RC_USER_ID_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
   public void getWebToken_should_generate_token_for_user() throws Exception {
-    mvc.perform(get(PATH_GET_WEB_TOKEN)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            get(PATH_GET_WEB_TOKEN)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
 
     verify(tokenGeneratorService).generateToken(RC_CHAT_ROOM_ID);
@@ -225,11 +284,12 @@ public class VideoControllerAuthorizationIT {
   @Test
   @WithMockUser(authorities = {AUTHORITY_CONSULTANT})
   public void getWebToken_should_generate_token_for_consultant() throws Exception {
-    mvc.perform(get(PATH_GET_WEB_TOKEN)
-            .cookie(csrfCookie)
-            .header(CSRF_HEADER, CSRF_VALUE)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(
+            get(PATH_GET_WEB_TOKEN)
+                .cookie(csrfCookie)
+                .header(CSRF_HEADER, CSRF_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
 
     verify(tokenGeneratorService).generateToken(RC_CHAT_ROOM_ID);

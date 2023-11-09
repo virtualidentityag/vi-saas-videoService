@@ -1,6 +1,7 @@
 package de.caritas.cob.videoservice.config.security;
 
 import static de.caritas.cob.videoservice.api.authorization.Authority.CONSULTANT;
+import static de.caritas.cob.videoservice.api.authorization.Authority.JITSI_TECHNICAL;
 import static de.caritas.cob.videoservice.api.authorization.Authority.USER;
 
 import de.caritas.cob.videoservice.api.authorization.RoleAuthorizationAuthorityMapper;
@@ -28,11 +29,12 @@ import org.springframework.security.web.authentication.session.NullAuthenticated
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfFilter;
 
-/**
- * Configuration class to provide the Keycloak security configuration.
- */
+/** Configuration class to provide the Keycloak security configuration. */
 @KeycloakConfiguration
 public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+
+  private static final String UUID_PATTERN =
+      "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b";
 
   @Value("${csrf.cookie.property}")
   private String csrfCookieProperty;
@@ -48,11 +50,10 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http
-        .csrf()
+    http.csrf()
         .disable()
-        .addFilterBefore(new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty),
-            CsrfFilter.class)
+        .addFilterBefore(
+            new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty), CsrfFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
@@ -62,11 +63,18 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers("/videocalls/new")
         .hasAuthority(CONSULTANT.getAuthority())
+        .antMatchers("/videocalls/stop/{sessionId:" + UUID_PATTERN + "}")
+        .hasAnyAuthority(CONSULTANT.getAuthority())
+        .antMatchers("/videocalls/join/{sessionId:" + UUID_PATTERN + "}")
+        .hasAnyAuthority(CONSULTANT.getAuthority())
+        .antMatchers("/videocalls/event/stop/*")
+        .hasAnyAuthority(JITSI_TECHNICAL.getAuthority())
         .antMatchers("/videocalls/reject")
-        .hasAnyAuthority(USER.getAuthority())
+        .hasAnyAuthority(USER.getAuthority(), CONSULTANT.getAuthority())
         .antMatchers("/videocalls/*/jwt")
         .permitAll()
-        .anyRequest().denyAll()
+        .anyRequest()
+        .denyAll()
         .and()
         .exceptionHandling()
         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
@@ -99,12 +107,12 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * register it in the Spring security context. This maps the Keycloak roles to match the Spring
    * security roles (prefix ROLE_).
    *
-   * @param auth            {@link AuthenticationManagerBuilder}
+   * @param auth {@link AuthenticationManagerBuilder}
    * @param authorityMapper custom {@link RoleAuthorizationAuthorityMapper}
    */
   @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth,
-      RoleAuthorizationAuthorityMapper authorityMapper) {
+  public void configureGlobal(
+      AuthenticationManagerBuilder auth, RoleAuthorizationAuthorityMapper authorityMapper) {
     var keyCloakAuthProvider = keycloakAuthenticationProvider();
     keyCloakAuthProvider.setGrantedAuthoritiesMapper(authorityMapper);
 
@@ -115,8 +123,8 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    * From the Keycloak documentation: "Spring Boot attempts to eagerly register filter beans with
    * the web application context. Therefore, when running the Keycloak Spring Security adapter in a
    * Spring Boot environment, it may be necessary to add FilterRegistrationBeans to your security
-   * configuration to prevent the Keycloak filters from being registered twice.":
-   * https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
+   * configuration to prevent the Keycloak filters from being registered twice.": <a
+   * href="https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc">...</a>
    *
    * @param filter {@link KeycloakAuthenticationProcessingFilter}
    * @return {@link FilterRegistrationBean}
