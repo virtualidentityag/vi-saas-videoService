@@ -2,7 +2,7 @@ package de.caritas.cob.videoservice.api.service;
 
 import static de.caritas.cob.videoservice.api.service.LogService.STATISTICS_EVENT_PROCESSING_ERROR;
 import static de.caritas.cob.videoservice.api.service.LogService.STATISTICS_EVENT_PROCESSING_WARNING;
-import static javax.servlet.RequestDispatcher.ERROR_MESSAGE;
+import static jakarta.servlet.RequestDispatcher.ERROR_MESSAGE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

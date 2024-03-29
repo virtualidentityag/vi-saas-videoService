@@ -10,8 +10,8 @@ import de.caritas.cob.videoservice.api.service.video.VideoCallUrlGeneratorServic
 import de.caritas.cob.videoservice.api.tenant.TenantContext;
 import de.caritas.cob.videoservice.generated.api.controller.VideocallsApi;
 import io.swagger.annotations.Api;
+import jakarta.validation.Valid;
 import java.util.UUID;
-import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
