@@ -3,7 +3,7 @@ package de.caritas.cob.videoservice.filter;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import de.caritas.cob.videoservice.config.SpringFoxConfig;
+import de.caritas.cob.videoservice.config.security.WebSecurityConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -74,7 +74,7 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
     @Override
     public boolean matches(HttpServletRequest request) {
 
-      if (Arrays.stream(SpringFoxConfig.WHITE_LIST)
+      if (Arrays.stream(WebSecurityConfig.WHITE_LIST)
           .parallel()
           .anyMatch(request.getRequestURI().toLowerCase()::contains)) {
         return false;

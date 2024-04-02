@@ -1,7 +1,6 @@
 package de.caritas.cob.videoservice.config.security;
 
 import de.caritas.cob.videoservice.api.authorization.Authority.AuthorityValue;
-import de.caritas.cob.videoservice.config.SpringFoxConfig;
 import de.caritas.cob.videoservice.filter.HttpTenantFilter;
 import de.caritas.cob.videoservice.filter.StatelessCsrfFilter;
 import jakarta.annotation.Nullable;
@@ -29,6 +28,22 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
   private static final String UUID_PATTERN =
       "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b";
+
+  public static final String[] WHITE_LIST =
+      new String[] {
+        "/videocalls/docs",
+        "/videocalls/docs/**",
+        "/videocalls/event/stop",
+        "/v2/api-docs",
+        "/configuration/ui",
+        "/swagger-resources/**",
+        "/configuration/security",
+        "/swagger-ui",
+        "/swagger-ui/**",
+        "/webjars/**",
+        "/actuator/health",
+        "/actuator/health/**"
+      };
 
   @Autowired AuthorisationService authorisationService;
   @Autowired JwtAuthConverterProperties jwtAuthConverterProperties;
@@ -69,7 +84,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .requestMatchers(SpringFoxConfig.WHITE_LIST)
+        .requestMatchers(WHITE_LIST)
         .permitAll()
         .requestMatchers("/videocalls/new")
         .hasAuthority(AuthorityValue.CONSULTANT)
