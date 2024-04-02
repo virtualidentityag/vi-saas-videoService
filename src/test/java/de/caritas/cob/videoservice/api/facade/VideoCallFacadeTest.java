@@ -147,9 +147,7 @@ class VideoCallFacadeTest {
     CreateVideoCallDTO createVideoCallRequest = new CreateVideoCallDTO().groupChatId(GROUP_CHAT_ID);
     assertThrows(
         AccessDeniedException.class,
-        () ->
-            videoCallFacade.startVideoCall(
-                createVideoCallRequest, "rcUserId"));
+        () -> videoCallFacade.startVideoCall(createVideoCallRequest, "rcUserId"));
   }
 
   @Test
