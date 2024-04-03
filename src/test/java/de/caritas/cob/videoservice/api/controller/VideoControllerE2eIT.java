@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.caritas.cob.videoservice.api.authorization.VideoUser;
+import de.caritas.cob.videoservice.api.authorization.AuthenticatedUser;
 import de.caritas.cob.videoservice.api.model.RejectVideoCallDTO;
 import de.caritas.cob.videoservice.api.service.RejectVideoCallService;
 import de.caritas.cob.videoservice.api.service.session.ChatService;
@@ -44,7 +44,7 @@ class VideoControllerE2eIT {
 
   @MockBean
   @SuppressWarnings("unused")
-  private VideoUser authenticatedUser;
+  private AuthenticatedUser authenticatedUser;
 
   @MockBean ChatService chatService;
 
