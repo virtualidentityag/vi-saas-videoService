@@ -13,9 +13,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.protocol.RedirectStrategy;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,9 +50,7 @@ public class MessageService {
     final HttpComponentsClientHttpRequestFactory factory =
         new HttpComponentsClientHttpRequestFactory();
     final HttpClient httpClient =
-        HttpClientBuilder.create()
-            .setRedirectStrategy((RedirectStrategy) new LaxRedirectStrategy())
-            .build();
+        HttpClientBuilder.create().setRedirectStrategy(new DefaultRedirectStrategy()).build();
     factory.setHttpClient(httpClient);
     restTemplate.setRequestFactory(factory);
     de.caritas.cob.videoservice.messageservice.generated.ApiClient apiClient =
