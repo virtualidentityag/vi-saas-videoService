@@ -45,30 +45,20 @@ public class WebSecurityConfig implements WebMvcConfigurer {
           "/actuator/health",
           "/actuator/health/**");
 
-  public WebSecurityConfig(
-      AuthorisationService authorisationService,
-      JwtAuthConverterProperties jwtAuthConverterProperties,
-      @Value("${multitenancy.enabled}") boolean multitenancy,
-      @Value("${csrf.cookie.property}") String csrfCookieProperty,
-      @Value("${csrf.header.property}") String csrfHeaderProperty,
-      @Autowired(required = false) HttpTenantFilter httpTenantFilter) {
-    this.authorisationService = authorisationService;
-    this.jwtAuthConverterProperties = jwtAuthConverterProperties;
-    this.multitenancy = multitenancy;
-    this.httpTenantFilter = httpTenantFilter;
-    this.csrfCookieProperty = csrfCookieProperty;
-    this.csrfHeaderProperty = csrfHeaderProperty;
-  }
+  @Autowired AuthorisationService authorisationService;
+  @Autowired JwtAuthConverterProperties jwtAuthConverterProperties;
 
-  AuthorisationService authorisationService;
-  JwtAuthConverterProperties jwtAuthConverterProperties;
+  @Autowired(required = false)
+  @Nullable
+  private HttpTenantFilter httpTenantFilter;
 
-  @Nullable private HttpTenantFilter httpTenantFilter;
-
+  @Value("${csrf.cookie.property}")
   private String csrfCookieProperty;
 
+  @Value("${csrf.header.property}")
   private String csrfHeaderProperty;
 
+  @Value("${multitenancy.enabled}")
   private boolean multitenancy;
 
   /**
