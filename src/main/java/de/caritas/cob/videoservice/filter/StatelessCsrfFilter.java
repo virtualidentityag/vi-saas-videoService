@@ -1,9 +1,9 @@
 package de.caritas.cob.videoservice.filter;
 
+import static de.caritas.cob.videoservice.config.security.WebSecurityConfig.WHITE_LIST;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import de.caritas.cob.videoservice.config.security.WebSecurityConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -73,8 +73,7 @@ public class StatelessCsrfFilter extends OncePerRequestFilter {
      */
     @Override
     public boolean matches(HttpServletRequest request) {
-
-      if (Arrays.stream(WebSecurityConfig.WHITE_LIST)
+      if (Arrays.stream(WHITE_LIST.toArray(String[]::new))
           .parallel()
           .anyMatch(request.getRequestURI().toLowerCase()::contains)) {
         return false;

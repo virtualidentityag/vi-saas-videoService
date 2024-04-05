@@ -4,6 +4,7 @@ import de.caritas.cob.videoservice.api.authorization.Authority.AuthorityValue;
 import de.caritas.cob.videoservice.filter.HttpTenantFilter;
 import de.caritas.cob.videoservice.filter.StatelessCsrfFilter;
 import jakarta.annotation.Nullable;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,36 +30,45 @@ public class WebSecurityConfig implements WebMvcConfigurer {
   private static final String UUID_PATTERN =
       "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b";
 
-  public static final String[] WHITE_LIST =
-      new String[] {
-        "/videocalls/docs",
-        "/videocalls/docs/**",
-        "/videocalls/event/stop",
-        "/v2/api-docs",
-        "/configuration/ui",
-        "/swagger-resources/**",
-        "/configuration/security",
-        "/swagger-ui",
-        "/swagger-ui/**",
-        "/webjars/**",
-        "/actuator/health",
-        "/actuator/health/**"
-      };
+  public static final List<String> WHITE_LIST =
+      List.of(
+          "/videocalls/docs",
+          "/videocalls/docs/**",
+          "/videocalls/event/stop",
+          "/v2/api-docs",
+          "/configuration/ui",
+          "/swagger-resources/**",
+          "/configuration/security",
+          "/swagger-ui",
+          "/swagger-ui/**",
+          "/webjars/**",
+          "/actuator/health",
+          "/actuator/health/**");
 
-  @Autowired AuthorisationService authorisationService;
-  @Autowired JwtAuthConverterProperties jwtAuthConverterProperties;
+  public WebSecurityConfig(
+      AuthorisationService authorisationService,
+      JwtAuthConverterProperties jwtAuthConverterProperties,
+      @Value("${multitenancy.enabled}") boolean multitenancy,
+      @Value("${csrf.cookie.property}") String csrfCookieProperty,
+      @Value("${csrf.header.property}") String csrfHeaderProperty,
+      @Autowired(required = false) HttpTenantFilter httpTenantFilter) {
+    this.authorisationService = authorisationService;
+    this.jwtAuthConverterProperties = jwtAuthConverterProperties;
+    this.multitenancy = multitenancy;
+    this.httpTenantFilter = httpTenantFilter;
+    this.csrfCookieProperty = csrfCookieProperty;
+    this.csrfHeaderProperty = csrfHeaderProperty;
+  }
 
-  @Autowired(required = false)
-  @Nullable
-  private HttpTenantFilter httpTenantFilter;
+  AuthorisationService authorisationService;
+  JwtAuthConverterProperties jwtAuthConverterProperties;
 
-  @Value("${csrf.cookie.property}")
+  @Nullable private HttpTenantFilter httpTenantFilter;
+
   private String csrfCookieProperty;
 
-  @Value("${csrf.header.property}")
   private String csrfHeaderProperty;
 
-  @Value("${multitenancy.enabled}")
   private boolean multitenancy;
 
   /**
@@ -84,7 +94,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .requestMatchers(WHITE_LIST)
+        .requestMatchers(WHITE_LIST.toArray(String[]::new))
         .permitAll()
         .requestMatchers("/videocalls/new")
         .hasAuthority(AuthorityValue.CONSULTANT)
