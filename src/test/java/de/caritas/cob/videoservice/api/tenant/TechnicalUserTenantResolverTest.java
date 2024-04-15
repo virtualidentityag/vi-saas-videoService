@@ -1,6 +1,5 @@
 package de.caritas.cob.videoservice.api.tenant;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -28,8 +27,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 @ExtendWith(MockitoExtension.class)
 class TechnicalUserTenantResolverTest {
   public static final long TECHNICAL_CONTEXT = 0L;
-  @Mock
-  HttpServletRequest authenticatedRequest;
+  @Mock HttpServletRequest authenticatedRequest;
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   KeycloakAuthenticationToken token;
@@ -37,17 +35,13 @@ class TechnicalUserTenantResolverTest {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   AccessToken accessToken;
 
-  @Mock
-  Access access;
+  @Mock Access access;
 
-  @Mock
-  SecurityContext mockSecurityContext;
+  @Mock SecurityContext mockSecurityContext;
 
-  @Mock
-  Authentication mockAuthentication;
+  @Mock Authentication mockAuthentication;
 
-  @InjectMocks
-  TechnicalUserTenantResolver technicalUserTenantResolver;
+  @InjectMocks TechnicalUserTenantResolver technicalUserTenantResolver;
 
   @AfterEach
   public void tearDown() {

@@ -43,7 +43,6 @@ public class TechnicalUserTenantResolver implements TenantResolver {
     return Lists.newArrayList();
   }
 
-
   @Override
   public boolean canResolve(HttpServletRequest request) {
     return resolve(request).isPresent();
