@@ -5,29 +5,29 @@ import static de.caritas.cob.videoservice.api.testhelper.FieldConstants.FIELD_NA
 import static de.caritas.cob.videoservice.api.testhelper.FieldConstants.FIELD_VALUE_CSRF_TOKEN_COOKIE_PROPERTY;
 import static de.caritas.cob.videoservice.api.testhelper.FieldConstants.FIELD_VALUE_CSRF_TOKEN_HEADER_PROPERTY;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.BEARER_TOKEN;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import de.caritas.cob.videoservice.api.authorization.AuthenticatedUser;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SecurityHeaderSupplierTest {
+@ExtendWith(MockitoExtension.class)
+class SecurityHeaderSupplierTest {
 
   @InjectMocks private SecurityHeaderSupplier securityHeaderSupplier;
   @Mock private AuthenticatedUser videoUser;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     setField(
         securityHeaderSupplier,
         FIELD_NAME_CSRF_TOKEN_HEADER_PROPERTY,
@@ -39,14 +39,14 @@ public class SecurityHeaderSupplierTest {
   }
 
   @Test
-  public void getKeycloakAndCsrfHttpHeaders_Should_Return_HeaderWithCorrectContentType() {
+  void getKeycloakAndCsrfHttpHeaders_Should_Return_HeaderWithCorrectContentType() {
     HttpHeaders result = securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
 
     assertEquals(MediaType.APPLICATION_JSON, result.getContentType());
   }
 
   @Test
-  public void getKeycloakAndCsrfHttpHeaders_Should_Return_CorrectCookiePropertyName() {
+  void getKeycloakAndCsrfHttpHeaders_Should_Return_CorrectCookiePropertyName() {
     HttpHeaders result = securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
 
     assertTrue(
@@ -57,7 +57,7 @@ public class SecurityHeaderSupplierTest {
   }
 
   @Test
-  public void getKeycloakAndCsrfHttpHeaders_Should_Return_CorrectHeaderAndCookieValues() {
+  void getKeycloakAndCsrfHttpHeaders_Should_Return_CorrectHeaderAndCookieValues() {
     HttpHeaders result = securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();
     String cookieValue =
         "["
@@ -70,7 +70,7 @@ public class SecurityHeaderSupplierTest {
   }
 
   @Test
-  public void getRocketChatAndCsrfHttpHeaders_Should_ReturnHeaderWithKeycloakAuthToken() {
+  void getRocketChatAndCsrfHttpHeaders_Should_ReturnHeaderWithKeycloakAuthToken() {
     when(videoUser.getAccessToken()).thenReturn(BEARER_TOKEN);
 
     HttpHeaders result = securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders();

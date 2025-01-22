@@ -10,6 +10,7 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** Configuration class to provide the Keycloak security configuration. */
+@Configuration
 @KeycloakConfiguration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -70,8 +72,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     var httpSecurity =
-        http.csrf()
-            .disable()
+        http.csrf(csrf -> csrf.disable())
             .addFilterBefore(
                 new StatelessCsrfFilter(csrfCookieProperty, csrfHeaderProperty), CsrfFilter.class);
 
@@ -80,31 +81,34 @@ public class WebSecurityConfig implements WebMvcConfigurer {
           httpSecurity.addFilterAfter(httpTenantFilter, BearerTokenAuthenticationFilter.class);
     }
 
-    http.sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeRequests()
-        .requestMatchers(WHITE_LIST.toArray(String[]::new))
-        .permitAll()
-        .requestMatchers("/videocalls/new")
-        .hasAuthority(AuthorityValue.CONSULTANT)
-        .requestMatchers("/videocalls/stop/{sessionId:" + UUID_PATTERN + "}")
-        .hasAnyAuthority(AuthorityValue.CONSULTANT)
-        .requestMatchers("/videocalls/join/{sessionId:" + UUID_PATTERN + "}")
-        .hasAnyAuthority(AuthorityValue.CONSULTANT)
-        .requestMatchers("/videocalls/event/stop/*")
-        .hasAnyAuthority(AuthorityValue.JITSI_TECHNICAL)
-        .requestMatchers("/videocalls/reject")
-        .hasAnyAuthority(AuthorityValue.USER, AuthorityValue.CONSULTANT)
-        .requestMatchers("/videocalls/*/jwt")
-        .permitAll()
-        .anyRequest()
-        .denyAll()
-        .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+    http.sessionManagement(
+            management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            requests ->
+                requests
+                    .requestMatchers(WHITE_LIST.toArray(String[]::new))
+                    .permitAll()
+                    .requestMatchers("/videocalls/new")
+                    .hasAuthority(AuthorityValue.CONSULTANT)
+                    .requestMatchers("/videocalls/stop/{sessionId:" + UUID_PATTERN + "}")
+                    .hasAnyAuthority(AuthorityValue.CONSULTANT)
+                    .requestMatchers("/videocalls/join/{sessionId:" + UUID_PATTERN + "}")
+                    .hasAnyAuthority(AuthorityValue.CONSULTANT)
+                    .requestMatchers("/videocalls/event/stop/*")
+                    .hasAnyAuthority(AuthorityValue.JITSI_TECHNICAL)
+                    .requestMatchers("/videocalls/reject")
+                    .hasAnyAuthority(AuthorityValue.USER, AuthorityValue.CONSULTANT)
+                    .requestMatchers("/videocalls/*/jwt")
+                    .permitAll()
+                    .anyRequest()
+                    .denyAll())
+        .exceptionHandling(
+            handling ->
+                handling.authenticationEntryPoint(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
-    httpSecurity.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthConverter());
+    httpSecurity.oauth2ResourceServer(
+        server -> server.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter())));
     return httpSecurity.build();
   }
 

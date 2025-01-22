@@ -64,7 +64,7 @@ public class MessageApiClient
 
     } catch (IntrospectionException exception) {
       throw new InternalServerErrorException(
-          String.format("Could not obtain method properties of %s", queryValue), exception);
+          "Could not obtain method properties of %s".formatted(queryValue), exception);
     }
   }
 
@@ -77,7 +77,7 @@ public class MessageApiClient
       }
     } catch (Exception exception) {
       throw new InternalServerErrorException(
-          String.format("Could not obtain method key value pairs of %s", queryValue.toString()),
+          "Could not obtain method key value pairs of %s".formatted(queryValue.toString()),
           exception);
     }
   }

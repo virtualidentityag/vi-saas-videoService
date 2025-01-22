@@ -9,28 +9,28 @@ import de.caritas.cob.videoservice.liveservice.generated.web.model.LiveEventMess
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jeasy.random.EasyRandom;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class LiveEventNotificationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class LiveEventNotificationServiceTest {
 
   @InjectMocks private LiveEventNotificationService liveEventNotificationService;
   @Mock private LiveControllerApi liveControllerApi;
 
   private EasyRandom easyRandom;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     easyRandom = new EasyRandom();
   }
 
   @Test
-  public void sendVideoCallRequestLiveEvent_Should_SendLiveEvent() {
+  void sendVideoCallRequestLiveEvent_Should_SendLiveEvent() {
     LiveEventMessage liveEventMessage = mock(LiveEventMessage.class);
     List<String> userIds = easyRandom.objects(String.class, 20).collect(Collectors.toList());
 

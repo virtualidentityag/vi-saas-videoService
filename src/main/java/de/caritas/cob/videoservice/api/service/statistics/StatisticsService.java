@@ -46,9 +46,8 @@ public class StatisticsService {
                           .build()),
               () ->
                   LogService.logStatisticsEventWarning(
-                      String.format(
-                          "Empty statistics event message payload for type %s received",
-                          statisticsEvent.getClass().getSimpleName())));
+                      "Empty statistics event message payload for type %s received"
+                          .formatted(statisticsEvent.getClass().getSimpleName())));
     }
   }
 }

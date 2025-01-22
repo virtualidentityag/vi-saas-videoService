@@ -5,12 +5,12 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import de.caritas.cob.videoservice.tenantservice.generated.ApiClient;
+import jakarta.ws.rs.InternalServerErrorException;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.ws.rs.InternalServerErrorException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -62,8 +62,7 @@ public class TenantServiceApiClient extends ApiClient {
 
     } catch (IntrospectionException exception) {
       throw new InternalServerErrorException(
-          String.format("Could not obtain method properties of %s", queryValue.toString()),
-          exception);
+          "Could not obtain method properties of %s".formatted(queryValue.toString()), exception);
     }
   }
 
@@ -76,7 +75,7 @@ public class TenantServiceApiClient extends ApiClient {
       }
     } catch (Exception exception) {
       throw new InternalServerErrorException(
-          String.format("Could not obtain method key value pairs of %s", queryValue.toString()),
+          "Could not obtain method key value pairs of %s".formatted(queryValue.toString()),
           exception);
     }
   }

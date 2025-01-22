@@ -9,9 +9,9 @@ import static de.caritas.cob.videoservice.api.testhelper.TestConstants.SESSION_I
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.USERNAME;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.VIDEO_CALL_UUID;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;

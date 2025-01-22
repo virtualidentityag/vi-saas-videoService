@@ -7,7 +7,7 @@ import static de.caritas.cob.videoservice.api.testhelper.FieldConstants.FIELD_VA
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.SESSION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -24,18 +24,18 @@ import de.caritas.cob.videoservice.userservice.generated.web.model.ConsultantSes
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SessionServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SessionServiceTest {
 
   @InjectMocks private SessionService sessionService;
   @Mock private UserControllerApi userControllerApi;
@@ -54,7 +54,7 @@ public class SessionServiceTest {
   @Mock private UserServiceApiControllerFactory userControllerApiControllerFactory;
 
   @Test
-  public void
+  void
       findSessionOfCurrentConsultant_Should_ReturnConsultantSessionDto_When_GetSessionIsSuccessful() {
     ConsultantSessionDTO consultantSessionDto = mock(ConsultantSessionDTO.class);
     when(userControllerApiControllerFactory.createControllerApi()).thenReturn(userControllerApi);
@@ -68,7 +68,7 @@ public class SessionServiceTest {
   }
 
   @Test
-  public void findSessionOfCurrentConsultant_Should_AddKeycloakAndCsrfHttpHeaders() {
+  void findSessionOfCurrentConsultant_Should_AddKeycloakAndCsrfHttpHeaders() {
     HttpHeaders headers = new HttpHeaders();
     when(userControllerApiControllerFactory.createControllerApi()).thenReturn(userControllerApi);
     headers.add(FIELD_NAME_CSRF_TOKEN_HEADER_PROPERTY, FIELD_VALUE_CSRF_TOKEN_HEADER_PROPERTY);

@@ -1,10 +1,11 @@
 package de.caritas.cob.videoservice.api.exception.httpresponse;
 
+import java.io.Serial;
 import java.util.function.Consumer;
 
 public class BadRequestException extends CustomHttpStatusException {
 
-  private static final long serialVersionUID = -3553609955386498237L;
+  @Serial private static final long serialVersionUID = -3553609955386498237L;
 
   /**
    * BadRequest exception.

@@ -9,7 +9,7 @@ import de.caritas.cob.videoservice.api.service.RejectVideoCallService;
 import de.caritas.cob.videoservice.api.service.video.VideoCallUrlGeneratorService;
 import de.caritas.cob.videoservice.api.tenant.TenantContext;
 import de.caritas.cob.videoservice.generated.api.controller.VideocallsApi;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.NonNull;
@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Controller for video call requests. */
 @RestController
+@Tag(name = "video-controller")
 @RequiredArgsConstructor
-@Api(tags = "video-controller")
 public class VideoController implements VideocallsApi {
 
   private final @NonNull VideoCallFacade videoCallFacade;
