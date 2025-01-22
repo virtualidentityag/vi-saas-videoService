@@ -99,8 +99,7 @@ class VideoControllerIT {
   }
 
   @Test
-  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsNull()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsNull() throws Exception {
 
     mvc.perform(
             post(PATH_REJECT_VIDEO_CALL)
@@ -110,8 +109,7 @@ class VideoControllerIT {
   }
 
   @Test
-  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsEmpty()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnBadRequest_When_VideoCallRejectDtoIsEmpty() throws Exception {
 
     mvc.perform(
             post(PATH_REJECT_VIDEO_CALL)

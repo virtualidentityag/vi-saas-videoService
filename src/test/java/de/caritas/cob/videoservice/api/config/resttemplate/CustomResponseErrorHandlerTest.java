@@ -28,8 +28,7 @@ class CustomResponseErrorHandlerTest {
   private final CustomResponseErrorHandler errorHandler = new CustomResponseErrorHandler();
 
   @Test
-  void
-      handleError_Should_throwInternalServerErrorException_When_responseStatusIsNotLoopThrough() {
+  void handleError_Should_throwInternalServerErrorException_When_responseStatusIsNotLoopThrough() {
     assertThrows(
         InternalServerErrorException.class,
         () -> {
@@ -40,9 +39,8 @@ class CustomResponseErrorHandlerTest {
   }
 
   @Test
-  void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsForbidden()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsForbidden()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.FORBIDDEN);
 
@@ -56,9 +54,8 @@ class CustomResponseErrorHandlerTest {
   }
 
   @Test
-  void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsNotFound()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsNotFound()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
 
@@ -80,9 +77,8 @@ class CustomResponseErrorHandlerTest {
   }
 
   @Test
-  void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsBadRequest()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsBadRequest()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
 

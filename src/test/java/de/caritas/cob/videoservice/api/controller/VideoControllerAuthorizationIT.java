@@ -77,8 +77,7 @@ class VideoControllerAuthorizationIT {
   }
 
   @Test
-  void createVideoCall_Should_ReturnUnauthorized_When_AuthorizationIsMissing()
-      throws Exception {
+  void createVideoCall_Should_ReturnUnauthorized_When_AuthorizationIsMissing() throws Exception {
 
     when(videoCallFacade.startVideoCall(any(), anyString()))
         .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
@@ -95,9 +94,8 @@ class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser()
-  void
-      createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
-          throws Exception {
+  void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
+      throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -113,8 +111,7 @@ class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
-  void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
+  void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -156,8 +153,7 @@ class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
-  void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoCsrfTokens()
-      throws Exception {
+  void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoCsrfTokens() throws Exception {
     var path = "/videocalls/stop/" + easyRandom.nextInt(100);
 
     mvc.perform(
@@ -172,8 +168,7 @@ class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
-  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
     String content =
         new ObjectMapper()
             .writeValueAsString(
@@ -194,8 +189,7 @@ class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {"NO_AUTHORITY"})
-  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoAuthority()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoAuthority() throws Exception {
     String content =
         new ObjectMapper()
             .writeValueAsString(

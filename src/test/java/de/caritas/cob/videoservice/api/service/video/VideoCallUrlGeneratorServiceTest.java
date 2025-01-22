@@ -50,8 +50,7 @@ class VideoCallUrlGeneratorServiceTest {
   }
 
   @Test
-  void
-      generateVideoCallUrls_Should_throwInternalServerErrorException_When_videoUrlIsInvalid() {
+  void generateVideoCallUrls_Should_throwInternalServerErrorException_When_videoUrlIsInvalid() {
     assertThrows(
         InternalServerErrorException.class,
         () -> {

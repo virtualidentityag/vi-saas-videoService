@@ -36,8 +36,7 @@ class RoleAuthorizationAuthoritiesMapperTest {
   }
 
   @Test
-  void
-      mapAuthorities_Should_returnGrantedConsultantAuthority_When_authoritiesContainConsultant() {
+  void mapAuthorities_Should_returnGrantedConsultantAuthority_When_authoritiesContainConsultant() {
     List<GrantedAuthority> grantedAuthorities =
         Stream.of("a", "v", ROLE_CONSULTANT, "c")
             .map(SimpleGrantedAuthority::new)
