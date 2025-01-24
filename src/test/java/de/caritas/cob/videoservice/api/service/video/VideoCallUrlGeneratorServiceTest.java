@@ -2,6 +2,7 @@ package de.caritas.cob.videoservice.api.service.video;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -11,14 +12,14 @@ import de.caritas.cob.videoservice.api.service.video.jwt.TokenGeneratorService;
 import de.caritas.cob.videoservice.api.service.video.jwt.model.VideoCallToken;
 import de.caritas.cob.videoservice.api.service.video.jwt.model.VideoCallUrls;
 import org.jeasy.random.EasyRandom;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VideoCallUrlGeneratorServiceTest {
+@ExtendWith(MockitoExtension.class)
+class VideoCallUrlGeneratorServiceTest {
 
   private static final String FIELD_NAME_VIDEO_CALL_URL = "videoCallServerUrl";
   private static final String VIDEO_CALL_URL = "https://video.call";
@@ -28,7 +29,7 @@ public class VideoCallUrlGeneratorServiceTest {
   @Mock private TokenGeneratorService tokenGeneratorService;
 
   @Test
-  public void generateVideoCallUrls_Should_generateExpectedVideoCallUrls_When_askerNameIsGiven() {
+  void generateVideoCallUrls_Should_generateExpectedVideoCallUrls_When_askerNameIsGiven() {
     setField(this.videoCallUrlGeneratorService, FIELD_NAME_VIDEO_CALL_URL, VIDEO_CALL_URL);
     VideoCallToken videoCallToken = new EasyRandom().nextObject(VideoCallToken.class);
     String moderatorToken = "moderatorToken";
@@ -48,13 +49,16 @@ public class VideoCallUrlGeneratorServiceTest {
         is(VIDEO_CALL_URL + "/uniqueId?jwt=" + moderatorToken));
   }
 
-  @Test(expected = InternalServerErrorException.class)
-  public void
-      generateVideoCallUrls_Should_throwInternalServerErrorException_When_videoUrlIsInvalid() {
-    VideoCallToken videoCallToken = new EasyRandom().nextObject(VideoCallToken.class);
-    when(this.tokenGeneratorService.generateNonModeratorVideoCallToken(any()))
-        .thenReturn(videoCallToken);
+  @Test
+  void generateVideoCallUrls_Should_throwInternalServerErrorException_When_videoUrlIsInvalid() {
+    assertThrows(
+        InternalServerErrorException.class,
+        () -> {
+          VideoCallToken videoCallToken = new EasyRandom().nextObject(VideoCallToken.class);
+          when(this.tokenGeneratorService.generateNonModeratorVideoCallToken(any()))
+              .thenReturn(videoCallToken);
 
-    this.videoCallUrlGeneratorService.generateVideoCallUrls("uniqueId");
+          this.videoCallUrlGeneratorService.generateVideoCallUrls("uniqueId");
+        });
   }
 }

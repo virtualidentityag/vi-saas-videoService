@@ -11,15 +11,15 @@ import de.caritas.cob.videoservice.messageservice.generated.web.MessageControlle
 import de.caritas.cob.videoservice.messageservice.generated.web.model.VideoCallMessageDTO;
 import de.caritas.cob.videoservice.messageservice.generated.web.model.VideoCallMessageDTO.EventTypeEnum;
 import org.jeasy.random.EasyRandom;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RejectVideoCallServiceTest {
+@ExtendWith(MockitoExtension.class)
+class RejectVideoCallServiceTest {
 
   @InjectMocks private RejectVideoCallService rejectVideoCallService;
 
@@ -32,7 +32,7 @@ public class RejectVideoCallServiceTest {
   @Mock private ApiClient apiClient;
 
   @Test
-  public void rejectVideoCall_Should_useServicesCorrectly() {
+  void rejectVideoCall_Should_useServicesCorrectly() {
     var securityHeaders = new HttpHeaders();
     when(this.messageControllerApi.getApiClient()).thenReturn(this.apiClient);
     when(this.securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(securityHeaders);

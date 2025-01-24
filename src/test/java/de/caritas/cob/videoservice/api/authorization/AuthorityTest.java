@@ -5,19 +5,19 @@ import static de.caritas.cob.videoservice.api.authorization.Authority.USER;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.ROLE_CONSULTANT;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.ROLE_UNKNOWN;
 import static de.caritas.cob.videoservice.api.testhelper.TestConstants.ROLE_USER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorityTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorityTest {
 
   @Test
-  public void fromRoleName_Should_ReturnCorrectAuthority_ForKeycloakRoleConsultant() {
+  void fromRoleName_Should_ReturnCorrectAuthority_ForKeycloakRoleConsultant() {
 
     Authority result = Authority.fromRoleName(ROLE_CONSULTANT);
 
@@ -26,7 +26,7 @@ public class AuthorityTest {
   }
 
   @Test
-  public void fromRoleName_Should_ReturnCorrectAuthority_ForKeycloakRoleUser() {
+  void fromRoleName_Should_ReturnCorrectAuthority_ForKeycloakRoleUser() {
 
     Authority result = Authority.fromRoleName(ROLE_USER);
 
@@ -35,7 +35,7 @@ public class AuthorityTest {
   }
 
   @Test
-  public void fromRoleName_Should_ReturnNull_ForUnknownKeycloakRole() {
+  void fromRoleName_Should_ReturnNull_ForUnknownKeycloakRole() {
 
     Authority result = Authority.fromRoleName(ROLE_UNKNOWN);
 

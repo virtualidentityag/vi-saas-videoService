@@ -114,9 +114,8 @@ public class TokenGeneratorService {
   public String generateModeratorToken(String roomId, String guestVideoCallUrl) {
     if (isEmpty(roomId) || isEmpty(guestVideoCallUrl)) {
       throw new InternalServerErrorException(
-          String.format(
-              "Room ID (%s) or guest video call URL (%s) cannot be empty.",
-              roomId, guestVideoCallUrl));
+          "Room ID (%s) or guest video call URL (%s) cannot be empty."
+              .formatted(roomId, guestVideoCallUrl));
     }
 
     return buildModeratorJwt(roomId, guestVideoCallUrl);

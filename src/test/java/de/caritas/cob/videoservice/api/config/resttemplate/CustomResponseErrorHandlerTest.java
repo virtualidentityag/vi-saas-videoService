@@ -2,7 +2,8 @@ package de.caritas.cob.videoservice.api.config.resttemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import de.caritas.cob.videoservice.api.exception.httpresponse.InternalServerErrorException;
@@ -10,35 +11,36 @@ import de.caritas.cob.videoservice.config.resttemplate.CustomResponseErrorHandle
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.server.ResponseStatusException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CustomResponseErrorHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class CustomResponseErrorHandlerTest {
 
   @Mock private ClientHttpResponse httpResponse;
 
   private final CustomResponseErrorHandler errorHandler = new CustomResponseErrorHandler();
 
-  @Test(expected = InternalServerErrorException.class)
-  public void
-      handleError_Should_throwInternalServerErrorException_When_responseStatusIsNotLoopThrough()
-          throws Exception {
-    URL url = new URL("http://test.de");
+  @Test
+  void handleError_Should_throwInternalServerErrorException_When_responseStatusIsNotLoopThrough() {
+    assertThrows(
+        InternalServerErrorException.class,
+        () -> {
+          URL url = new URL("http://test.de");
 
-    handleErrorGet(url);
+          handleErrorGet(url);
+        });
   }
 
   @Test
-  public void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsForbidden()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsForbidden()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.FORBIDDEN);
 
@@ -52,9 +54,8 @@ public class CustomResponseErrorHandlerTest {
   }
 
   @Test
-  public void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsNotFound()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsNotFound()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
 
@@ -76,9 +77,8 @@ public class CustomResponseErrorHandlerTest {
   }
 
   @Test
-  public void
-      handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsBadRequest()
-          throws Exception {
+  void handleError_Should_throwExpectedResponseStatusException_When_responseStatusIsBadRequest()
+      throws Exception {
     URL url = new URL("http://test.de");
     when(httpResponse.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
 

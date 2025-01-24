@@ -16,21 +16,18 @@ import de.caritas.cob.videoservice.testconfig.RabbitMqTestConfig;
 import java.io.IOException;
 import java.util.UUID;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @ContextConfiguration(classes = RabbitMqTestConfig.class)
 @SpringBootTest(classes = VideoServiceApplication.class)
-public class StatisticsServiceIT {
+class StatisticsServiceIT {
 
   private static final long MAX_TIMEOUT_MILLIS = 5000;
 
@@ -38,7 +35,7 @@ public class StatisticsServiceIT {
   @Autowired AmqpTemplate amqpTemplate;
 
   @Test
-  public void fireEvent_Should_Send_ExpectedAssignSessionStatisticsEventMessageToQueue()
+  void fireEvent_Should_Send_ExpectedAssignSessionStatisticsEventMessageToQueue()
       throws IOException {
 
     UUID uuid = UUID.randomUUID();

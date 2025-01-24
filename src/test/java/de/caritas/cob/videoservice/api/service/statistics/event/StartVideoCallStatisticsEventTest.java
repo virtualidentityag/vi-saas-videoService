@@ -11,21 +11,21 @@ import de.caritas.cob.videoservice.statisticsservice.generated.web.model.EventTy
 import de.caritas.cob.videoservice.statisticsservice.generated.web.model.UserRole;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StartVideoCallStatisticsEventTest {
+@ExtendWith(MockitoExtension.class)
+class StartVideoCallStatisticsEventTest {
 
   private StartVideoCallStatisticsEvent startVideoCallStatisticsEvent;
   private UUID uuid;
 
   private UUID adviceSeekerUuid;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     uuid = UUID.randomUUID();
     adviceSeekerUuid = UUID.randomUUID();
     startVideoCallStatisticsEvent =
@@ -39,13 +39,13 @@ public class StartVideoCallStatisticsEventTest {
   }
 
   @Test
-  public void getEventType_Should_ReturnEventTypeCreateMessage() {
+  void getEventType_Should_ReturnEventTypeCreateMessage() {
 
     assertThat(startVideoCallStatisticsEvent.getEventType(), is(EventType.START_VIDEO_CALL));
   }
 
   @Test
-  public void getPayload_Should_ReturnValidJsonPayload() {
+  void getPayload_Should_ReturnValidJsonPayload() {
 
     String expectedJson =
         "{"

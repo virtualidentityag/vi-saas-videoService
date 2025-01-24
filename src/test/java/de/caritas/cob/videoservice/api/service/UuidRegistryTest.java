@@ -4,33 +4,33 @@ import static de.caritas.cob.videoservice.api.service.UuidRegistry.GENERATED_UUI
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UuidRegistryTest {
+@ExtendWith(MockitoExtension.class)
+class UuidRegistryTest {
 
   private UuidRegistry uuidRegistry = new UuidRegistry();
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     uuidRegistry.cleanUpUuidRegistry();
   }
 
   @Test
-  public void generateUniqueUuid_Should_ReturnValidUuid() {
+  void generateUniqueUuid_Should_ReturnValidUuid() {
     String response = uuidRegistry.generateUniqueUuid();
 
     assertThat(UUID.fromString(response), instanceOf(UUID.class));
   }
 
   @Test
-  public void generateUniqueUuid_Should_AddGeneratedUuidToRegistry() {
+  void generateUniqueUuid_Should_AddGeneratedUuidToRegistry() {
     String response = uuidRegistry.generateUniqueUuid();
 
     assertThat(UUID.fromString(response), instanceOf(UUID.class));
@@ -38,7 +38,7 @@ public class UuidRegistryTest {
   }
 
   @Test
-  public void cleanUpEntireList_Should_cleanListOfUuids() {
+  void cleanUpEntireList_Should_cleanListOfUuids() {
     uuidRegistry.cleanUpUuidRegistry();
     assertEquals(0, GENERATED_UUIDS.size());
   }

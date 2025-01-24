@@ -30,8 +30,7 @@ import de.caritas.cob.videoservice.api.service.RejectVideoCallService;
 import de.caritas.cob.videoservice.api.service.video.jwt.TokenGeneratorService;
 import jakarta.servlet.http.Cookie;
 import org.jeasy.random.EasyRandom;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,14 +39,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = "spring.profiles.active=testing")
 @SpringBootTest
 @AutoConfigureMockMvc
-public class VideoControllerAuthorizationIT {
+class VideoControllerAuthorizationIT {
 
   private static final EasyRandom easyRandom = new EasyRandom();
 
@@ -63,7 +60,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
-  public void createVideoCall_Should_ReturnCreated_When_EverythingSucceeded() throws Exception {
+  void createVideoCall_Should_ReturnCreated_When_EverythingSucceeded() throws Exception {
 
     when(videoCallFacade.startVideoCall(any(), anyString()))
         .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
@@ -80,8 +77,7 @@ public class VideoControllerAuthorizationIT {
   }
 
   @Test
-  public void createVideoCall_Should_ReturnUnauthorized_When_AuthorizationIsMissing()
-      throws Exception {
+  void createVideoCall_Should_ReturnUnauthorized_When_AuthorizationIsMissing() throws Exception {
 
     when(videoCallFacade.startVideoCall(any(), anyString()))
         .thenReturn(CREATE_VIDEO_CALL_RESPONSE_DTO);
@@ -98,9 +94,8 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser()
-  public void
-      createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
-          throws Exception {
+  void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoConsultantDefaultAuthority()
+      throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -116,8 +111,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
-  public void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
+  void createVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
 
     mvc.perform(
             post(PATH_START_VIDEO_CALL)
@@ -130,7 +124,7 @@ public class VideoControllerAuthorizationIT {
   }
 
   @Test
-  public void stopVideoCallShouldReturnUnauthorizedWhenAuthorizationIsMissing() throws Exception {
+  void stopVideoCallShouldReturnUnauthorizedWhenAuthorizationIsMissing() throws Exception {
     var path = "/videocalls/stop/" + easyRandom.nextInt(100);
 
     mvc.perform(
@@ -143,7 +137,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser()
-  public void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoConsultantDefaultAuthority()
+  void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoConsultantDefaultAuthority()
       throws Exception {
     var path = "/videocalls/stop/" + easyRandom.nextInt(100);
 
@@ -159,8 +153,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = AUTHORITY_CONSULTANT)
-  public void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoCsrfTokens()
-      throws Exception {
+  void stopVideoCallShouldReturnForbiddenAndCallNoMethodsWhenNoCsrfTokens() throws Exception {
     var path = "/videocalls/stop/" + easyRandom.nextInt(100);
 
     mvc.perform(
@@ -175,8 +168,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
-  public void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoCsrfTokens() throws Exception {
     String content =
         new ObjectMapper()
             .writeValueAsString(
@@ -197,8 +189,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {"NO_AUTHORITY"})
-  public void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoAuthority()
-      throws Exception {
+  void rejectVideoCall_Should_ReturnForbiddenAndCallNoMethods_WhenNoAuthority() throws Exception {
     String content =
         new ObjectMapper()
             .writeValueAsString(
@@ -221,7 +212,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
-  public void rejectVideoCall_Should_ReturnOkAndCallService_WhenUserRole() throws Exception {
+  void rejectVideoCall_Should_ReturnOkAndCallService_WhenUserRole() throws Exception {
     String content =
         new ObjectMapper()
             .writeValueAsString(
@@ -244,7 +235,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithAnonymousUser
-  public void getWebToken_should_generate_token_for_anonymous_user() throws Exception {
+  void getWebToken_should_generate_token_for_anonymous_user() throws Exception {
     mvc.perform(
             get(PATH_GET_WEB_TOKEN)
                 .cookie(csrfCookie)
@@ -258,7 +249,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithAnonymousUser
-  public void getWebToken_should_return_forbidden_for_request_without_csrf() throws Exception {
+  void getWebToken_should_return_forbidden_for_request_without_csrf() throws Exception {
     mvc.perform(
             get(PATH_GET_WEB_TOKEN)
                 .header(RC_USER_ID_HEADER, RC_USER_ID_VALUE)
@@ -269,7 +260,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_USER})
-  public void getWebToken_should_generate_token_for_user() throws Exception {
+  void getWebToken_should_generate_token_for_user() throws Exception {
     mvc.perform(
             get(PATH_GET_WEB_TOKEN)
                 .cookie(csrfCookie)
@@ -283,7 +274,7 @@ public class VideoControllerAuthorizationIT {
 
   @Test
   @WithMockUser(authorities = {AUTHORITY_CONSULTANT})
-  public void getWebToken_should_generate_token_for_consultant() throws Exception {
+  void getWebToken_should_generate_token_for_consultant() throws Exception {
     mvc.perform(
             get(PATH_GET_WEB_TOKEN)
                 .cookie(csrfCookie)

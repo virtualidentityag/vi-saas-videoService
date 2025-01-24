@@ -1,9 +1,11 @@
 package de.caritas.cob.videoservice.api.exception;
 
+import java.io.Serial;
+
 /** Custom Keycloak exception. */
 public class KeycloakException extends RuntimeException {
 
-  private static final long serialVersionUID = -5083156826149548581L;
+  @Serial private static final long serialVersionUID = -5083156826149548581L;
 
   /**
    * Keycloak exception.
